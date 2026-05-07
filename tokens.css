@@ -1,0 +1,143 @@
+/* Lumen design tokens — neon 3D isometric (tron / matrix) */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Deep navy-black backdrop */
+  --bg-0: #03060f;
+  --bg-1: #060b1c;
+  --bg-2: #0a1228;
+  --bg-3: #0f1c3a;
+  --bg-4: #142a55;
+
+  --line-1: rgba(0, 212, 255, 0.08);
+  --line-2: rgba(0, 212, 255, 0.16);
+  --line-3: rgba(0, 212, 255, 0.28);
+
+  --fg-0: #e6f6ff;
+  --fg-1: #9fc6e4;
+  --fg-2: #5d83a8;
+  --fg-3: #3a5572;
+
+  /* Electric blue primary */
+  --accent: #00d4ff;
+  --accent-hi: #6ef2ff;
+  --accent-lo: #0089b8;
+  --accent-glow: rgba(0, 212, 255, 0.45);
+
+  /* Emerald/matrix secondary */
+  --neon: #00ff9d;
+  --neon-hi: #6effc1;
+  --neon-glow: rgba(0, 255, 157, 0.4);
+
+  --success: #00ff9d;
+  --danger:  #ff3b6b;
+  --info:    #00d4ff;
+
+  --highlight: rgba(0, 255, 157, 0.20);
+  --highlight-strong: rgba(0, 255, 157, 0.50);
+
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
+
+  --t-display: clamp(48px, 7vw, 96px);
+  --t-h1: clamp(36px, 4.5vw, 56px);
+  --t-h2: 32px;
+  --t-h3: 22px;
+  --t-body: 15px;
+  --t-sm: 13px;
+  --t-xs: 11px;
+
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-full: 999px;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 0 1px rgba(0, 212, 255, 0.45), 0 0 28px rgba(0, 212, 255, 0.35);
+  --shadow-neon: 0 0 0 1px rgba(0, 255, 157, 0.4), 0 0 24px rgba(0, 255, 157, 0.3);
+  --shadow-iso:
+    -8px 8px 0 rgba(0, 212, 255, 0.08),
+    -16px 16px 0 rgba(0, 212, 255, 0.04),
+    0 24px 60px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(0, 212, 255, 0.18);
+  --inner-1: inset 0 1px 0 rgba(0, 212, 255, 0.10);
+
+  --grid-color: rgba(0, 212, 255, 0.10);
+  --grid-color-bold: rgba(0, 212, 255, 0.20);
+  --grid-size: 64px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-snap: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 360ms;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 212, 255, 0.08), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(0, 255, 157, 0.06), transparent 70%),
+    var(--bg-0);
+  color: var(--fg-0);
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: -25% -10% -10% -10%;
+  pointer-events: none;
+  background-image:
+    linear-gradient(60deg, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(-60deg, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(0deg, var(--grid-color) 1px, transparent 1px);
+  background-size: var(--grid-size) calc(var(--grid-size) * 1.732);
+  transform: perspective(1400px) rotateX(58deg);
+  transform-origin: 50% 100%;
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 70%, #000 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 70%, #000 30%, transparent 85%);
+  opacity: 0.9;
+  z-index: 0;
+}
+
+::selection { background: var(--accent-glow); color: var(--fg-0); text-shadow: 0 0 8px var(--accent); }
+
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-lo), var(--bg-3));
+  border-radius: 999px;
+  border: 2px solid var(--bg-0);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--accent), var(--bg-4)); }
