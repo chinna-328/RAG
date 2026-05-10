@@ -3,7 +3,7 @@ import type { Source } from '../../shared/types.js';
 import { chunkText } from './chunker.js';
 import { embedTexts } from './gemini.js';
 import { ensureCollection, upsertChunks, upsertSourceText } from './qdrant.js';
-import { extractPdf, extractPlain } from './extract.js';
+import { extractPdf, extractPlain, extractCsv } from './extract.js';
 import { addSource } from './store.js';
 
 export type IndexParams = {
@@ -19,8 +19,18 @@ export type IndexParams = {
 export async function indexFile(params: IndexParams): Promise<Source> {
   const { notebookId, buffer, filename, mimetype, bytes, chunkSize, chunkOverlap } = params;
 
-  const isPdf = mimetype === 'application/pdf' || filename.toLowerCase().endsWith('.pdf');
-  const pages = isPdf ? await extractPdf(buffer) : extractPlain(buffer);
+  const lower = filename.toLowerCase();
+  const isPdf = mimetype === 'application/pdf' || lower.endsWith('.pdf');
+  const isCsv =
+    mimetype === 'text/csv' ||
+    mimetype === 'application/csv' ||
+    mimetype === 'application/vnd.ms-excel' ||
+    lower.endsWith('.csv');
+  const pages = isPdf
+    ? await extractPdf(buffer)
+    : isCsv
+      ? extractCsv(buffer)
+      : extractPlain(buffer);
 
   if (pages.length === 0 || pages.every((p) => !p.text.trim())) {
     throw new Error('Could not extract text from this file.');

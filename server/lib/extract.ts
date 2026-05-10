@@ -31,6 +31,82 @@ export async function extractPdf(buffer: Buffer): Promise<PageText[]> {
   return pages;
 }
 
+export function extractCsv(buffer: Buffer): PageText[] {
+  const text = buffer.toString('utf8').replace(/^﻿/, '');
+  if (!text.trim()) return [];
+  const rows = parseCsv(text);
+  if (rows.length === 0) return [];
+
+  const [header, ...body] = rows;
+  if (body.length === 0) {
+    // Header-only file — still index it so users can ask about column names.
+    return [{ page: 1, text: formatRow(header) }];
+  }
+
+  // Group ~50 rows per page so citations point at a useful slice. Keep the
+  // header at the top of every page so each chunk reads as labelled records.
+  const ROWS_PER_PAGE = 50;
+  const pages: PageText[] = [];
+  for (let i = 0; i < body.length; i += ROWS_PER_PAGE) {
+    const slice = body.slice(i, i + ROWS_PER_PAGE);
+    const lines = [formatRow(header), ...slice.map(formatRow)];
+    pages.push({ page: pages.length + 1, text: lines.join('\n') });
+  }
+  return pages;
+}
+
+// Minimal RFC-4180 parser: handles quoted fields, escaped quotes (""),
+// commas and newlines inside quotes, and CRLF line endings.
+function parseCsv(input: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = '';
+  let inQuotes = false;
+  for (let i = 0; i < input.length; i++) {
+    const c = input[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (input[i + 1] === '"') {
+          field += '"';
+          i += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        field += c;
+      }
+      continue;
+    }
+    if (c === '"') {
+      inQuotes = true;
+    } else if (c === ',') {
+      row.push(field);
+      field = '';
+    } else if (c === '\n' || c === '\r') {
+      row.push(field);
+      field = '';
+      // Skip the \n in a \r\n pair.
+      if (c === '\r' && input[i + 1] === '\n') i += 1;
+      if (row.length > 1 || row[0] !== '') rows.push(row);
+      row = [];
+    } else {
+      field += c;
+    }
+  }
+  // Flush trailing field/row (file without final newline).
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    if (row.length > 1 || row[0] !== '') rows.push(row);
+  }
+  return rows;
+}
+
+function formatRow(cells: string[]): string {
+  // Collapse internal whitespace per cell so a single row stays on one line —
+  // chunkers treat newlines as paragraph boundaries.
+  return cells.map((c) => c.replace(/\s+/g, ' ').trim()).join(' | ');
+}
+
 export function extractPlain(buffer: Buffer): PageText[] {
   const text = buffer.toString('utf8').trim();
   if (!text) return [];

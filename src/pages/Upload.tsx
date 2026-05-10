@@ -151,7 +151,7 @@ export function UploadPage() {
               </div>
               <div className="text-xl font-medium mb-2">Drop your document here</div>
               <div className="text-fg-2 text-sm">
-                or click to browse · PDF, TXT, MD up to 50MB
+                or click to browse · PDF, TXT, MD, CSV up to 50MB
               </div>
               <div className="mt-7">
                 <Button icon={<UploadIcon size={14} />}>Choose file</Button>
@@ -161,7 +161,7 @@ export function UploadPage() {
               ref={fileInputRef}
               type="file"
               hidden
-              accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+              accept=".pdf,.txt,.md,.csv,application/pdf,text/plain,text/markdown,text/csv"
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 if (f) void handleFile(f);
